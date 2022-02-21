@@ -1,44 +1,70 @@
-import React from 'react'
-import styled from 'styled-components'
+import styled, { DefaultTheme } from "styled-components";
+import { InputProps, scales } from "./types";
 
-export interface InputProps {
-  endAdornment?: React.ReactNode
-  onChange: (e: React.FormEvent<HTMLInputElement>) => void
-  placeholder?: string
-  startAdornment?: React.ReactNode
-  value: string
+interface StyledInputProps extends InputProps {
+  theme: DefaultTheme;
 }
 
-const Input: React.FC<InputProps> = ({ endAdornment, onChange, placeholder, startAdornment, value }) => {
-  return (
-    <StyledInputWrapper>
-      {!!startAdornment && startAdornment}
-      <StyledInput placeholder={placeholder} value={value} onChange={onChange} />
-      {!!endAdornment && endAdornment}
-    </StyledInputWrapper>
-  )
-}
+/**
+ * Priority: Warning --> Success
+ */
+const getBoxShadow = ({ isSuccess = false, isWarning = false, theme }: StyledInputProps) => {
+  if (isWarning) {
+    return theme.shadows.warning;
+  }
 
-const StyledInputWrapper = styled.div`
-  align-items: center;
-  background-color: ${(props) => props.theme.colors.input};
-  border-radius: ${(props) => props.theme.radii.default};
-  display: flex;
-  height: 72px;
-  padding: 0 ${(props) => props.theme.spacing[3]}px;
-`
+  if (isSuccess) {
+    return theme.shadows.success;
+  }
 
-const StyledInput = styled.input`
-  width: 100%;
-  background: none;
+  return theme.shadows.inset;
+};
+
+const getHeight = ({ scale = scales.MD }: StyledInputProps) => {
+  switch (scale) {
+    case scales.SM:
+      return "32px";
+    case scales.LG:
+      return "48px";
+    case scales.MD:
+    default:
+      return "40px";
+  }
+};
+
+const Input = styled.input<InputProps>`
+  background-color: ${({ theme }) => theme.colors.input};
   border: 0;
-  color: ${(props) => props.theme.colors.primary};
-  font-size: 18px;
-  flex: 1;
-  height: 56px;
-  margin: 0;
-  padding: 0;
-  outline: none;
-`
+  border-radius: 16px;
+  box-shadow: ${getBoxShadow};
+  color: ${({ theme }) => theme.colors.text};
+  display: block;
+  font-size: 16px;
+  height: ${getHeight};
+  outline: 0;
+  padding: 0 16px;
+  width: 100%;
 
-export default Input
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textSubtle};
+  }
+
+  &:disabled {
+    background-color: ${({ theme }) => theme.colors.backgroundDisabled};
+    box-shadow: none;
+    color: ${({ theme }) => theme.colors.textDisabled};
+    cursor: not-allowed;
+  }
+
+  &:focus:not(:disabled) {
+    box-shadow: ${({ theme }) => theme.shadows.focus};
+  }
+`;
+
+Input.defaultProps = {
+  scale: scales.MD,
+  isSuccess: false,
+  isWarning: false,
+};
+
+export default Input;
