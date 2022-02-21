@@ -16,7 +16,7 @@ import useAllEarnings from '../../../hooks/useAllEarnings'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 
 const StyledFarmStakingCard = styled(Card)`
-  background-image: url('/images/egg/merk.png');
+  background-image: url('/images/egg/merk2.png');
   background-repeat: no-repeat;
   background-position: top right;
   min-height: 376px;
